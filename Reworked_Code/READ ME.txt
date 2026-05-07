@@ -1,0 +1,16 @@
+I have updated all but the perturbation file
+and post-process file. 
+
+Jake, post-process file is open for you do what you want with to edit
+the plots. 
+
+I still need to finish adding the materials to the materials.py because I removed
+a lot of the additional cross sections that just aren't needed.
+
+One thing to note as a lessons learned make sure sigma_removal is not 0.0 (inherets sigma_a).
+Had this as an error and took me way too long to figure out why the reflector savings was blowing up.
+But I think the critical width is alot more reasonable for a bare reactor at ~57cm.
+
+I will finish perturbation file and material file if no else does tomorrow afternoon 
+goal is ~4-5pm hopefully. 
+
