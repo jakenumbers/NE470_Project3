@@ -9,21 +9,91 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from solver import reshape_flux, average_power_density
+import math
+import seaborn as sns
+import matplotlib.patches as mpatches
+
+"""
+Plot styles, according to IEEE
+"""
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman"],
+    "mathtext.fontset": "cm",
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 7.5,
+    "axes.spines.top": True,
+    "axes.spines.right": True,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "xtick.minor.visible": True,
+    "ytick.minor.visible": True,
+})
 
 
 #%% Region Shading Function
-def shade_regions(ax, regions):
+def shade_regions(ax, regions, max_phi):
     """Shade the axes background by region for context."""
-    cmap = plt.get_cmap("Pastel1")
     x_off = 0.0
+    num_regions = len(regions.regions)
+    colors = []
+    if num_regions % 2 == 0:
+        num_colors = math.ceil(num_regions/2)
+        colors = sns.color_palette("pastel", num_colors)
+        colors.extend(colors[::-1])
+    else:
+        if num_regions == 1:
+            num_colors = num_regions
+        else:
+            num_colors = math.ceil(num_regions/2)
+        colors = sns.color_palette("pastel", num_colors)
+        colors += colors[::-1][1:]
+    print(colors)
+    hatch_styles = []
+    for i in range(num_regions):
+        if num_regions % 2 == 0:
+            if i == math.floor((num_regions-1)/2):
+                hatch_styles.append('//')
+            elif i == math.ceil((num_regions-1)/2):
+                hatch_styles.append('\\\\')
+            elif i % 2 == 0 and i > ((num_regions-1)/2):
+                hatch_styles.append('\\\\')
+            elif i % 2 == 1 and i < ((num_regions-1)/2):
+                hatch_styles.append('//')
+            elif i % 2 == 1 and i > ((num_regions-1)/2):
+                hatch_styles.append('//')
+            elif i % 2 == 0 and i < ((num_regions-1)/2):
+                hatch_styles.append('\\\\')
+        else:
+            if i == ((num_regions-1)/2):
+                hatch_styles.append('')
+            elif i % 2 == 1 and i > ((num_regions-1)/2):
+                hatch_styles.append('\\\\')
+            elif i % 2 == 1 and i < ((num_regions-1)/2):
+                hatch_styles.append('//')
+            elif i % 2 == 0 and i > ((num_regions-1)/2):
+                hatch_styles.append('//')
+            elif i % 2 == 0 and i < ((num_regions-1)/2):
+                hatch_styles.append('\\\\')
+    colors.extend(colors[::-1]) # Reverse list and append it
+    print(hatch_styles)
+
+
     for idx, r in enumerate(regions.regions):
-        ax.axvspan(x_off, x_off + r.w, color=cmap(idx % cmap.N), alpha=0.35,
-                   zorder=0, label=f"{r.name} ({r.mat.name})")
+        # ax.axvspan(x_off, x_off + r.w, color=cmap(idx % cmap.N), alpha=0.35, zorder=0, label=f"{r.name} ({r.mat.name})")
+        ax.fill_between([x_off, (x_off + r.w)], [max_phi*1.1,max_phi*1.1], hatch=hatch_styles[idx], facecolor=(colors[idx],0.35), 
+                        edgecolor=(colors[idx],0.6), zorder=0, 
+                        label=f"{r.name} ({r.mat.name})")
         x_off += r.w
 
 
-def legend_no_dupes(ax, **kw):
+def legend_no_dupes(ax,k_val, **kw):
     handles, labels = ax.get_legend_handles_labels()
+    k_patch = mpatches.Patch(color='none',label=f"k = {k_val:.5f}")
+    handles.append(k_patch)
+    labels.append(f"k = {k_val:.5f}")
     seen = {}
     for h, l in zip(handles, labels):
         if l not in seen:
@@ -35,6 +105,7 @@ def legend_no_dupes(ax, **kw):
 def plot_flux(
     phi,
     mesh,
+    k,
     title=None,
     normalize=True,
     show_regions=True,
@@ -63,10 +134,10 @@ def plot_flux(
 
     own_fig = ax is None
     if own_fig:
-        fig, ax = plt.subplots(figsize=(9, 5))
+        fig, ax = plt.subplots(figsize=(6, 4))
 
     if show_regions:
-        shade_regions(ax, mesh.regions)
+        shade_regions(ax, mesh.regions, np.max(phi_gx))
 
     group_labels = ["Fast (g=1)", "Epi (g=2)", "Res (g=3)", "Thermal (g=4)"]
     if G == 2:
@@ -82,8 +153,8 @@ def plot_flux(
     ax.set_ylabel("Flux  $\\phi_g$" + (" (normalised)" if normalize else " [n/cm$^2$/s]"))
     if title:
         ax.set_title(title)
-    ax.grid(True, alpha=0.3)
-    legend_no_dupes(ax, fontsize=8, loc="best")
+    # ax.grid(True, alpha=0.3)
+    legend_no_dupes(ax, k, loc="best")
 
     if save and own_fig:
         os.makedirs(os.path.dirname(save) or ".", exist_ok=True)
@@ -99,11 +170,11 @@ def plot_convergence(history, title=None, save=None, ax=None):
     """Plot k_eff vs power-iteration step."""
     own_fig = ax is None
     if own_fig:
-        fig, ax = plt.subplots(figsize=(7, 4))
+        fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(history, "o-", ms=3)
     ax.set_xlabel("Power iteration")
     ax.set_ylabel("$k$")
-    ax.grid(True, alpha=0.3)
+    # ax.grid(True, alpha=0.3)
     if title:
         ax.set_title(title)
     if save and own_fig:

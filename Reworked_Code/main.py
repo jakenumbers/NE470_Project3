@@ -43,9 +43,11 @@ def _save(name):
 bare_results, bw, mesh_b = crit_search(PWR_2G,nodes_per_cm,5.0,600.0,False)
 print(f'Bare Results Final Width: {bw:.3f}')
 
-plot_flux(bare_results["phi"], mesh_b,
-          title=f"Bare core (k = {bare_results['k']:.5f})",
+plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
           save=_save("Bare_Core.png"))
+# plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
+#           title=f"Bare core (k = {bare_results['k']:.5f})",
+#           save=_save("Bare_Core.png"))
 
 #Reflector Savings
 for ref_width in np.linspace(5,25,5):
@@ -54,8 +56,7 @@ for ref_width in np.linspace(5,25,5):
     ref_save = (bw - rsw)/2
     print(f'Reflector Savings: {ref_save:.3f}')
 
-plot_flux(ref_save_results["phi"], mesh_rs,
-          title=f"Reflector + core (k = {ref_save_results['k']:.5f})",
+plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'],
           save=_save("Refl_Core.png"))
 
 

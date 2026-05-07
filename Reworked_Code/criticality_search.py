@@ -76,17 +76,17 @@ def reflector_savings(core_mat, reflector_mat, reflector_width, nodes_density: f
     #Solve for lowest width and highest width bare cores. If both are below or above k exit and return error
     ref_nodes = int(reflector_width * nodes_density)
     wl_num_nodes = int(width_low * nodes_density)
-    regs = Regions(Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat),
+    regs = Regions(Region("Left Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat),
                    Region("Bare Core", w=width_low, n=wl_num_nodes, mat=core_mat),
-                   Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat))
+                   Region("Right Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat))
     mesh = Mesh(regs)
     A, F = build_matrices(mesh)
     wl_res = solve_keff(A, F)
     
     wh_num_nodes = int((width_high)* nodes_density)
-    regs = Regions(Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat),
+    regs = Regions(Region("Left Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat),
                    Region("Bare Core", w=width_high, n=wh_num_nodes, mat=core_mat),
-                   Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat))
+                   Region("Right Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat))
     mesh = Mesh(regs)
     A, F = build_matrices(mesh)
     wh_res = solve_keff(A, F)
@@ -100,9 +100,9 @@ def reflector_savings(core_mat, reflector_mat, reflector_width, nodes_density: f
     wh = width_high
     for it in range(max_iter):
         num_nodes = int(width * nodes_density)
-        regs = Regions(Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat),
+        regs = Regions(Region("Left Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat),
                        Region("Bare Core", w=width, n=num_nodes, mat=core_mat),
-                       Region("Water Reflector", w=reflector_width, n=ref_nodes, mat=reflector_mat))
+                       Region("Right Refl.", w=reflector_width, n=ref_nodes, mat=reflector_mat))
         mesh = Mesh(regs)
         A, F = build_matrices(mesh)
         wm_res = solve_keff(A,F)
