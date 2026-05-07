@@ -5,7 +5,6 @@ main.py
 Main for NE 470 Project 3.
 Reactor Cases:
     Case 1   - Bare homogeneous PWR 2-region core (critical-width search)
-    Case 1b  - Bare homogeneous PWR 4-region core (critical-width search)
     Case 2   - Homogeneous PWR + water reflector (reflector savings)
     Case 3   - Heterogeneous 5-region 4-group core
     Case 3b  - Layered 5-region core, flat-flux optimisation
@@ -39,6 +38,10 @@ os.makedirs(OUT_DIR, exist_ok=True)
 def _save(name):
     return os.path.join(OUT_DIR, name)
 
+# ---------------------------------------------------------------------------------------
+# Case 1: Homogen. PWR, 2-region core
+# ---------------------------------------------------------------------------------------
+
 #Crit Search (Core Material, Node Density, Min Width, Max Width, Default Tolerancing is found in python file)
 bare_results, bw, mesh_b = crit_search(PWR_2G,nodes_per_cm,5.0,600.0,False)
 print(f'Bare Results Final Width: {bw:.3f}')
@@ -48,6 +51,16 @@ plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
 # plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
 #           title=f"Bare core (k = {bare_results['k']:.5f})",
 #           save=_save("Bare_Core.png"))
+
+
+# ---------------------------------------------------------------------------------------
+# Case 1b: Homogen. PWR, 4-region core
+# ---------------------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------------------
+# Case 2: Homogen. PWR 2-region core with reflector, savings calc.
+# ---------------------------------------------------------------------------------------
 
 #Reflector Savings
 for ref_width in np.linspace(5,25,5):

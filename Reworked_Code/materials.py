@@ -16,14 +16,25 @@ Each :class:`Material` carries:
     sigma_r[g]            : removal cross section                [1/cm]
  
 """
-#%%
+########################################################################
+## Materials Program ###################################################
+########################################################################
+
+
 import numpy as np
+
+
+#####################
+## Define class #####
+#####################
+
 
 class Material:
     """Class for a single material's group-wise cross sections."""
 
     def __init__(
         self,
+        ## Initialize values
         name,
         G,
         D,
@@ -37,11 +48,15 @@ class Material:
         sigma_r=None,
         description=""):
         
+        #####################       
         self.name = name
         self.G = int(G)
+        ## Define diffusion coefficient if not already defined
         self.D = (np.asarray(Diff_Coeff, dtype=float)
                   if Diff_Coeff is not None
                   else np.asarray(1.0 / (3.0 * np.array(sigma_tr)), dtype=float))
+                  
+        #####################
         self.sigma_a = np.asarray(sigma_a, dtype=float)
         self.nu_sigma_f = np.asarray(nu_sigma_f, dtype=float)
         self.chi = np.asarray(chi, dtype=float)
@@ -50,8 +65,11 @@ class Material:
         self.description = description
         self.sigma_r = np.asarray(sigma_r, dtype=float)
         self._validate()
+        
 
+###############################################################
 #valdiation code to ensure material has all required properties
+
     def _validate(self):
         for name, arr in (
             ("D", self.D),
@@ -59,37 +77,59 @@ class Material:
             ("nu_sigma_f", self.nu_sigma_f),
             ("chi", self.chi),
             ("sigma_r", self.sigma_r)):
+            
+            #####################
             if arr.shape != (self.G,):
                 raise ValueError(
                     f"Material {self.name!r}: '{name}' has shape {arr.shape}, "
                     f"expected ({self.G},)")
+                    
+                    
+        #####################
         if self.sigma_s.shape != (self.G, self.G):
             raise ValueError(
                 f"Material {self.name!r}: sigma_s shape {self.sigma_s.shape}, "
                 f"expected ({self.G},{self.G})")
 
+
+###########################################
 # fissile material check function if needed
     def is_fissile(self):
         return float(self.nu_sigma_f.sum()) > 0.0
 
-#%%
-# --- 2-GROUP MATERIALS ---
+
+
+
+########################################################
+# --- 2-GROUP MATERIALS --- ############################
+########################################################
+
+
+
+###################################
 # Materials for Baseline Validation
+
+
+## where did these benchmark/baseline values come from? 
+
+
 PWR_2G = Material(
     name="PWR_Core_2G",
     G=2,
     D=None,
-    sigma_a=[0.01207,0.1210],
-    sigma_f=[0.00332,0.07537],
-    nu_sigma_f=[0.008476,0.18514],
+    sigma_a=[0.01207,0.1210], 			
+    sigma_f=[0.00332,0.07537],			
+    nu_sigma_f=[0.008476,0.18514],	
     chi=[1.0,0.0],
     sigma_s=[[0.0,0.01412],[0.0,0.0]],
     sigma_tr=None,
     Diff_Coeff=[1.2627,0.3543],
     sigma_r=[0.02619,0.1210],
     description="Two Group PWR Core")
-
+    
+########################################
 #Water Reflector for "Reflector Savings"
+
 WATER_2G = Material(
     name="Water_Reflector_2G",
     G=2,
@@ -105,95 +145,120 @@ WATER_2G = Material(
     sigma_r=[0.0494,0.0197],
     description="Two Group Water Reflector")
 
+########################################
 # Materials from provided Cross Sections
+
+
+#############################################
 #Water Reflector 17x17 W Assembly next to H2O
+
 H2O_2G = Material(
     name="H2O_2G",
     G=2,
-    D=None,
-    sigma_a=[0.001128, 0.009114],
-    sigma_f=[0.0,0.0],
-    nu_sigma_f=[0.0,0.0],
-    chi=[0.0,0.0],
+    D=None,				##ok
+    sigma_a=[0.001128, 0.009114],	##ok
+    sigma_f=[0.0,0.0],			##ok
+    nu_sigma_f=[0.0,0.0],		##ok
+    chi=[0.0,0.0],			##ok
     sigma_s=[[0.0,0.02229],
-            [0.0002373,0.0]],
-    sigma_tr=[0.2342,1.047],
-    Diff_Coeff=None,
-    sigma_r=[0.02342,0.009351],
+            [0.0002373,0.0]],		##ok
+    sigma_tr=[0.2342,1.047],		##ok
+    Diff_Coeff=None,			##ok
+    sigma_r=[0.02342,0.009351],		##ok
     description="Two Group H2O Reflector")
 
+#################################################
 #Beryllium Reflector 17x17 W Assembly next to H2O    
+
 BE_2G = Material(
     name="BE_2G",
     G=2,
-    D=None,
-    sigma_a=[0.0005143, 0.001885],
-    sigma_f=[0.0,0.0],
-    nu_sigma_f=[0.0,0.0],
-    chi=[0.0,0.0],
-    sigma_s=[[0.0,0.009472],
+    D=None,					##ok
+    sigma_a=[0.0005143, 0.001885],		##ok
+    sigma_f=[0.0,0.0],				##ok
+    nu_sigma_f=[0.0,0.0],			##ok
+    chi=[0.0,0.0],				##ok
+    sigma_s=[[0.0,0.009472],			##ok
             [0.0004423,0.0]],
-    sigma_tr=[0.5162,1.082],
-    Diff_Coeff=None,
-    sigma_r=[0.00986,0.002327],
+    sigma_tr=[0.5162,1.082],			##ok
+    Diff_Coeff=None,				##ok		
+    sigma_r=[0.009986,0.002327],		###ERROR: sigma_r=[0.00986,0.002327],	
     description="Two Group Beryllium Reflector")
 
+################################################
 #Graphite Reflector 17x17 W Assembly next to H2O    
+
 C_2G = Material(
     name="C_2G",
     G=2,
-    D=None,
-    sigma_a=[0.0005952, 0.001064],
-    sigma_f=[0.0,0.0],
-    nu_sigma_f=[0.0,0.0],
-    chi=[0.0,0.0],
-    sigma_s=[[0.0,0.004215],
-            [0.0003985,0.0]],
-    sigma_tr=[0.3612,0.4936],
-    Diff_Coeff=None,
-    sigma_r=[0.004810,0.001462],
+    D=None,					##ok
+    sigma_a=[0.0005952, 0.001064],		##ok
+    sigma_f=[0.0,0.0],				##ok
+    nu_sigma_f=[0.0,0.0],			##ok
+    chi=[0.0,0.0],				##ok
+    sigma_s=[[0.0,0.004215],			
+            [0.0003985,0.0]],			##ok
+    sigma_tr=[0.3612,0.4936],			##ok
+    Diff_Coeff=None,				##ok
+    sigma_r=[0.004810,0.001462],		##ok
     description="Two Group Graphite Reflector")
 
-#Stainless Steel Reflector 17x17 W Assembly next to H2O    
+#######################################################
+#Stainless Steel Reflector 17x17 W Assembly next to H2O   
+ 
 SS_2G = Material(
     name="SS_2G",
     G=2,
-    D=None,
-    sigma_a=[0.001521, 0.004995],
-    sigma_f=[0.0,0.0],
-    nu_sigma_f=[0.0,0.0],
-    chi=[0.0,0.0],
-    sigma_s=[[0.0,0.0003044],
+    D=None,					##ok
+    sigma_a=[0.001521, 0.004995],		##ok
+    sigma_f=[0.0,0.0],				##ok
+    nu_sigma_f=[0.0,0.0],			##ok
+    chi=[0.0,0.0],				##ok
+    sigma_s=[[0.0,0.0003044],			##ok
             [0.0007263,0.0]],
-    sigma_tr=[0.2779,0.2983],
-    Diff_Coeff=None,
-    sigma_r=[0.001825,0.005721],
+    sigma_tr=[0.2779,0.2983],			##ok
+    Diff_Coeff=None,				##ok
+    sigma_r=[0.001825,0.005721],		##ok
     description="Two Group Graphite Reflector")
 
 
-#%% 4 Group Materials
 
+
+
+
+
+########################################################
+#%% --- 4 Group Materials --- ##########################
+########################################################
+
+
+## what about the other 4 group reflectors?? Beryllium, and Graphite?
+
+
+#############################################
 #Water Reflector 17x17 W Assembly next to H2O
 H2O_4G = Material(
     name="H2O_4G",
     G=4,
     D=None,
-    sigma_a=[0.00031, 0.002475, 0.00145, 0.009114],
-    sigma_f=[0.0,0.0,0.0,0.0],
-    nu_sigma_f=[0.0,0.0,0.0,0.0],
-    chi=[0.0,0.0,0.0,0.0],
-    sigma_s=[[0.0, 0.03058, 0.00006841, 0.000000352],
-             [0.0, 0.0, 0.0742, 0.0003847],
-             [0.0, 0.0, 0.0, 0.1018],
-             [0.0, 0.0, 0.0002373, 0.0]],
-    sigma_tr=[0.1805,0.3327,0.3611,1.047],
-    Diff_Coeff=None,
-    sigma_r=[0.03096,0.07707,0.1033,0.009351],
+    sigma_a=[0.00031, 0.002475, 0.00145, 0.009114],	##ok
+    sigma_f=[0.0,0.0,0.0,0.0],				##ok
+    nu_sigma_f=[0.0,0.0,0.0,0.0],			##ok
+    chi=[0.0,0.0,0.0,0.0],				##ok
+    sigma_s=[[0.0, 0.03058, 0.00006841, 0.000000352],	##
+             [0.0, 0.0, 0.0742, 0.0003947],		##ERROR: [0.0, 0.0, 0.0742, 0.0003847],
+             [0.0, 0.0, 0.0, 0.1018],			##ok
+             [0.0, 0.0, 0.0002373, 0.0]],		##ok
+    sigma_tr=[0.1805,0.3327,0.3611,1.047],		##ok
+    Diff_Coeff=None,					##ok
+    sigma_r=[0.03096,0.07707,0.1033,0.009351],		##ok
     description="Four Group H2O Reflector")
 
 
 
-#%%
+
+
+##########################
 # Material Library look-up
 lib_2G = {
     "PWR": PWR_2G,
@@ -207,7 +272,16 @@ lib_4G = {
     "H2O":        H2O_4G,
 }
 
+
+##########################################
+## 
 def list_materials(groups=2):
     lib = lib_2G if groups == 2 else lib_4G
     return sorted(lib)
+    
+    
+    
+    
+    
+    
 
