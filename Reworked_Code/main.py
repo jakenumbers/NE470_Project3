@@ -4,12 +4,12 @@ main.py
 
 Main for NE 470 Project 3.
 Reactor Cases:
-    Case 1   - Bare homogeneous PWR 2-region core (critical-width search)
-    Case 2   - Homogeneous PWR + water reflector (reflector savings)
-    Case 3   - Heterogeneous 5-region 4-group core
-    Case 3b  - Layered 5-region core, flat-flux optimisation
-    Case 4   - Adjoint + Rayleigh-quotient extra credit
-    Case 5   - 4-group homogeneous calculation (extra credit)
+    Case 1 (DONE) - Bare homogeneous PWR 2-region core (critical-width search)
+    Case 2 (DONE) - Homogeneous PWR + water reflector (reflector savings)
+    Case 3        - Heterogeneous 5-region 4-group core
+    Case 3b       - Layered 5-region core, flat-flux optimisation
+    Case 4        - Adjoint + Rayleigh-quotient extra credit
+    Case 5        - 4-group homogeneous calculation (extra credit)
 
 """
 
