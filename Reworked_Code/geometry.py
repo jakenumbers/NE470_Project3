@@ -87,6 +87,11 @@ class Regions:
         """Material of node i (the node between node k and k+1)."""
         return self.regions[self.node_region[k]].mat
 
+    def summary(self):
+        lines = [
+            f"Regions: w_tot={self.total_width:.4f} cm, " 
+            f"{self.N} nodes, G={self.G}"]
+
 class Mesh:
     """Material-attached mesh that the matrix builder consumes.
 

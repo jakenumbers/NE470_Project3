@@ -59,14 +59,20 @@ class Material:
         #####################
         self.sigma_a = np.asarray(sigma_a, dtype=float)
         self.nu_sigma_f = np.asarray(nu_sigma_f, dtype=float)
+        self.sigma_f = np.asarray(sigma_f, dtype=float)
         self.chi = np.asarray(chi, dtype=float)
         self.sigma_s = np.asarray(sigma_s, dtype=float)  # [g_from, g_to]
         self.sigma_tr = (np.asarray(sigma_tr, dtype=float) if sigma_tr is not None else None)
         self.description = description
         self.sigma_r = np.asarray(sigma_r, dtype=float)
+        if sigma_s is None:
+            # Assume no skip scattering, no up-scattering
+            self.sigma_s = np.zeros((G, G))
+            for g in range(G-1):
+                self.sigma_s[g,g+1]= sigma_r[g] - sigma_a[g]
         self._validate()
-        
 
+        
 ###############################################################
 #valdiation code to ensure material has all required properties
 
@@ -254,6 +260,23 @@ H2O_4G = Material(
     sigma_r=[0.03096,0.07707,0.1033,0.009351],		##ok
     description="Four Group H2O Reflector")
 
+# Typical PWR homogenized core (textbook four-group values used for the base
+# homogeneous configuration in the project statement).
+PWR_4G = Material(
+    name="PWR, homogeneous, 4G",
+    G=4,
+    D=[2.1623, 1.0867, 0.6318, 0.3543],
+    sigma_a=[0.004946, 0.002840, 0.03053, 0.1210],
+    sigma_f=[0.003378, 0.0004850, 0.006970, 0.07527],
+    nu_sigma_f=[0.009572, 0.001193, 0.01768, 0.18514],
+    chi=[1.0, 0.0, 0.0, 0.0],
+    sigma_s=None,
+    sigma_tr=None,
+    Diff_Coeff=[2.1623, 1.0867, 0.6318, 0.3543],
+    sigma_r=[0.08795, 0.06124, 0.09506, 0.1210],
+    description="Four-group homogenized PWR core (Lamarsh-style typical PWR).",
+)
+
 
 
 
@@ -270,6 +293,7 @@ lib_2G = {
 
 lib_4G = {
     "H2O":        H2O_4G,
+    "PWR":        PWR_4G,
 }
 
 

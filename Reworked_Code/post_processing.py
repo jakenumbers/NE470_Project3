@@ -50,7 +50,6 @@ def shade_regions(ax, regions, max_phi):
             num_colors = math.ceil(num_regions/2)
         colors = sns.color_palette("pastel", num_colors)
         colors += colors[::-1][1:]
-    print(colors)
     hatch_styles = []
     for i in range(num_regions):
         if num_regions % 2 == 0:
@@ -78,7 +77,6 @@ def shade_regions(ax, regions, max_phi):
             elif i % 2 == 0 and i < ((num_regions-1)/2):
                 hatch_styles.append('\\\\')
     colors.extend(colors[::-1]) # Reverse list and append it
-    print(hatch_styles)
 
 
     for idx, r in enumerate(regions.regions):
