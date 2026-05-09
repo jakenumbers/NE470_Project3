@@ -110,10 +110,10 @@ bare_results, bw, mesh_b = crit_search(PWR_2G,nodes_per_cm,5.0,600.0,False)
 print(f'Bare Results Final Width: {bw:.3f}')
 
 plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
-          save=_save("Case1_Bare_Core.png"))
+          save=_save("Case1_Bare_Core.pdf"))
 # plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
 #           title=f"Bare core (k = {bare_results['k']:.5f})",
-#           save=_save("Bare_Core.png"))
+#           save=_save("Bare_Core.pdf"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ for ref_width in np.linspace(5,25,5):
     print(f'Reflector Savings: {ref_save:.3f}')
 
 plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'],
-          save=_save("Case2a_Refl_Core.png"))
+          save=_save("Case2a_Refl_Core.pdf"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ for ref_width in np.linspace(5,25,5):
     print(f'Reflector Savings: {ref_save:.3f}')
 
 plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'],
-          save=_save("Case2b_Refl_Core_4G.png"))
+          save=_save("Case2b_Refl_Core_4G.pdf"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ res_3a_normalized["phi"], _ = normalize_to_power_density(res_3a["phi"], mesh_3a,
 # print_summary(res_3a_normalized, mesh_3a)
 
 plot_flux(res_3a_normalized["phi"], mesh_3a, res_3a_normalized['k'],
-          save=_save("Case3a_7-reg_2G.png"))
+          save=_save("Case3a_7-reg_2G.pdf"))
 
 
 
@@ -205,7 +205,7 @@ res_3b_normalized["phi"], _ = normalize_to_power_density(res_3b["phi"], mesh_3b,
 # print_summary(res_3b_normalized, mesh_3b)
 
 plot_flux(res_3b_normalized["phi"], mesh_3b, res_3b_normalized['k'],
-          save=_save("Case3b_7-reg_4G.png"))
+          save=_save("Case3b_7-reg_4G.pdf"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ res_3c_opt_normalized["phi"], _ = normalize_to_power_density(res_3c_opt["phi"], 
 # print_summary(res_3c_opt_normalized, mesh_3c_opt)
 
 plot_flux(res_3c_opt_normalized["phi"], mesh_3c_opt, res_3c_opt_normalized['k'],
-          save=_save("Case3c_opt_7-reg_4G.png"))
+          save=_save("Case3c_opt_7-reg_4G.pdf"))
 
 
 # ---------------------------------------------------------------------------------------
