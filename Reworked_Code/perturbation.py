@@ -11,6 +11,25 @@ from matrix_builder import build_matrices
 from solver import solve_keff, solve_adjoint
 import matplotlib.pyplot as plt
 
+"""
+Plot styles, according to IEEE
+"""
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman"],
+    "mathtext.fontset": "cm",
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 7.5,
+    "axes.spines.top": True,
+    "axes.spines.right": True,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "xtick.minor.visible": True,
+    "ytick.minor.visible": True,
+})
+
 #%%Rayleigh Quotient Calculation
 def rayleigh_calc(phi, phi_adjoint, A, F):
     A_phi = A @ phi
@@ -63,7 +82,7 @@ def perturbation_example(regions, mat):
         pred_rho.append(new_k)
     
     x = [-0.25,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.25]
-    plt.figure(figsize=(10.,10.))
+    plt.figure(figsize=(10.,7.))
     plt.plot(x,pred_rho)
     plt.plot(x,exact_rho)
     plt.xlabel('Multipler * sigma_a')

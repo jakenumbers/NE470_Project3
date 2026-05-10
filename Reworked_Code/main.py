@@ -248,14 +248,18 @@ print("\n" + "=" * 70)
 print("Case 4: Adjoint + Rayleigh-quotient")
 print("\n" + "=" * 70)
 regions_4 = Regions(
-    Region("Left Water",        w=20, n=nodes(10), mat=WATER_2G),
-    Region("Left Fuel, Fresh",   w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
-    Region("Central Fuel, BU30",   w=10, n=nodes(30), mat=UO2_W17_BU30_2G),
-    Region("Right Fuel, Fresh",  w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
-    Region("Right Water",       w=20, n=nodes(10), mat=WATER_2G)
+    Region("Reflector",        w=15.0, n=nodes(15), mat=H2O_4G),
+    Region("Fresh Fuel",   w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("Rodded AIC Fuel",   w=10, n=nodes(15), mat=Rodded_AIC_4G),
+    Region("Fresh Fuel",  w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("Reflector",       w=15, n=nodes(15), mat=H2O_4G)
 )
 
-perturbation_example(regions_4, UO2_W17_BU30_2G)
+mesh_4 = Mesh(regions_4)
+A_4, F_4 = build_matrices(mesh_4)
+res_4 = solve_keff(A_4, F_4)
+
+perturbation_example(regions_4, FRESH_FUEL_4G)
 
 
 
