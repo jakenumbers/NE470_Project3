@@ -184,7 +184,7 @@ def average_power_density(phi, mesh):
     return p_per_area / W
 
 
-def normalize_to_power_density(phi, mesh, target_W_per_cm3=47.0):
+def normalize_to_power_density(phi, mesh, target_W_per_cm3=90):
     """
     Rescale phi so that the fuel-averaged power density equals target_W_per_cm3
 

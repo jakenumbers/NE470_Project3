@@ -2,14 +2,16 @@
 perturbation.py
 
 """
+import os
 import copy
 import numpy as np
 import scipy.sparse as sp
 from materials import Material
 from geometry import Region, Regions, Mesh
 from matrix_builder import build_matrices
-from solver import solve_keff, solve_adjoint
+from solver import solve_keff, solve_adjoint, normalize_to_power_density
 import matplotlib.pyplot as plt
+from post_processing import (plot_flux,print_summary,write_flux_csv)
 
 """
 Plot styles, according to IEEE
@@ -18,7 +20,7 @@ plt.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman"],
     "mathtext.fontset": "cm",
-    "axes.labelsize": 11,
+    "axes.labelsize": 10,
     "xtick.labelsize": 10,
     "ytick.labelsize": 10,
     "legend.fontsize": 7.5,
@@ -29,6 +31,12 @@ plt.rcParams.update({
     "xtick.minor.visible": True,
     "ytick.minor.visible": True,
 })
+
+OUT_DIR = "results"
+os.makedirs(OUT_DIR, exist_ok=True)
+
+def _save(name):
+    return os.path.join(OUT_DIR, name)
 
 #%%Rayleigh Quotient Calculation
 def rayleigh_calc(phi, phi_adjoint, A, F):
@@ -49,6 +57,25 @@ def perturbation_example(regions, mat):
     A, F = build_matrices(mesh)
     forward = solve_keff(A, F)
     adjoint = solve_adjoint(A, F)
+
+    forward_normalized = forward.copy()
+    forward_normalized["phi"], _ = normalize_to_power_density(forward["phi"], mesh, 90)
+    # print_summary(forward_normalized, mesh_3a)
+
+    plot_flux(forward_normalized["phi"], mesh, forward_normalized['k'], title='Forward Solution',
+            save=_save("Case4_forward.pdf"))
+    plot_flux(forward_normalized["phi"], mesh, forward_normalized['k'], title='Forward Solution',
+            save=_save("Case4_forward.png"))
+
+    adjoint_normalized = adjoint.copy()
+    adjoint_normalized["phi"], _ = normalize_to_power_density(adjoint["phi"], mesh, 90)
+    # print_summary(adjoint_normalized, mesh_3a)
+
+    plot_flux(adjoint_normalized["phi"], mesh, adjoint_normalized['k'], title='Adjoint Solution',
+            save=_save("Case4_adjoint.pdf"))
+    plot_flux(adjoint_normalized["phi"], mesh, adjoint_normalized['k'], title='Adjoint Solution',
+            save=_save("Case4_adjoint.png"))
+
     
     #Sets values for Rayleigh Quotient
     k_0, phi, phi_adjoint = forward['k'], forward['phi'], adjoint['phi']
@@ -82,13 +109,16 @@ def perturbation_example(regions, mat):
         pred_rho.append(new_k)
     
     x = [-0.25,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.25]
-    plt.figure(figsize=(10.,7.))
-    plt.plot(x,pred_rho)
-    plt.plot(x,exact_rho)
-    plt.xlabel('Multipler * sigma_a')
-    plt.ylabel('Change in Reactivity')
-    plt.title('Predicted vs Exact Change in Reactivity')
-    plt.show()
+    plt.figure(figsize=(4,4))
+    plt.plot(x,pred_rho, linestyle='--', label = 'First-order perturbation (Rayleigh)')
+    plt.plot(x,exact_rho, label = 'Exact $\Delta k$')
+    plt.xlabel('$\Delta \Sigma_a$')
+    plt.ylabel('$\Delta$k')
+    # plt.title('$\Delta$k')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(_save('Case4_perturbation.pdf'))
+    plt.savefig(_save('Case4_perturbation.png'))
 #%% Changes material properties by a delta
 def perturb_mat(mat, dsigma_a, group):
     #copy the material

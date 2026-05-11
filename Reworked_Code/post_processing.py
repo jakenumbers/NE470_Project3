@@ -20,7 +20,7 @@ plt.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman"],
     "mathtext.fontset": "cm",
-    "axes.labelsize": 11,
+    "axes.labelsize": 10,
     "xtick.labelsize": 10,
     "ytick.labelsize": 10,
     "legend.fontsize": 7.5,
@@ -31,7 +31,6 @@ plt.rcParams.update({
     "xtick.minor.visible": True,
     "ytick.minor.visible": True,
 })
-
 
 #%% Region Shading Function
 def shade_regions(ax, regions, max_phi):
@@ -78,13 +77,14 @@ def shade_regions(ax, regions, max_phi):
                 hatch_styles.append('\\\\')
     colors.extend(colors[::-1]) # Reverse list and append it
 
-
+    print('Widths:')
     for idx, r in enumerate(regions.regions):
         # ax.axvspan(x_off, x_off + r.w, color=cmap(idx % cmap.N), alpha=0.35, zorder=0, label=f"{r.name} ({r.mat.name})")
         ax.fill_between([x_off, (x_off + r.w)], [max_phi*1.1,max_phi*1.1], hatch=hatch_styles[idx], facecolor=(colors[idx],0.35), 
                         edgecolor=(colors[idx],0.6), zorder=0, 
-                        label=f"{r.name} ({r.mat.name})")
+                        label=f"{r.mat.name} – {r.name}")
         x_off += r.w
+        print(f'   {r.name}: {r.w}')
 
 
 def legend_no_dupes(ax,k_val, **kw):
@@ -117,7 +117,7 @@ def plot_flux(
     phi : flat group-major flux vector
     mesh : Mesh object
     normalize : if True, scale each group so that max(group 0) = 1
-                (purely cosmetic if the flux has been power-normalised)
+                (purely cosmetic if the flux has been power-Normalized)
     show_regions : shade background by region
     save : optional path to save figure (PNG/PDF)
     ax : existing matplotlib axes; if None, create a new figure
@@ -148,9 +148,10 @@ def plot_flux(
                 lw=2, label=lab)
 
     ax.set_xlabel("Position x [cm]")
-    ax.set_ylabel("Flux  $\\phi_g$" + (" (normalised)" if normalize else " [n/cm$^2$/s]"))
+    ax.set_ylabel("Flux  $\\phi_g$" + (" (Normalized)" if normalize else " [n/cm$^2$/s]"))
     if title:
-        ax.set_title(title)
+        # ax.set_title(title)
+        ax.text(0.05,0.94, title, transform=ax.transAxes, fontsize=12, fontweight='semibold', va='top', ha='left')
     # ax.grid(True, alpha=0.3)
     legend_no_dupes(ax, k, loc="best")
 

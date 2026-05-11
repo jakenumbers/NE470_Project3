@@ -46,7 +46,7 @@ from scipy.optimize import minimize
 from perturbation import perturbation_example
 
 # Power Density from Small Modular Reactor to Normalize Flux
-P_DENSITY_TARGET = 47.0 # W/cm^3   estimated power density
+P_DENSITY_TARGET = 90 # W/cm^3   estimated power density
 
 nodes_per_cm = 2.0
 
@@ -78,24 +78,24 @@ def objective_flatness(phi, x_range, cutoff):
 
 def case3_optimization(widths):
     w1, w2, w3, w4 = widths
-    regions_3c = Regions(
-        Region("Left Water",        w=w1, n=nodes(w1), mat=H2O_4G),
-        Region("Left Be Refl.",     w=w2, n=nodes(w2), mat=BE_4G),
-        Region("Left Fuel, Fresh",   w=w3, n=nodes(w3), mat=UO2_W17_FRESH_4G),
-        Region("Central Fuel, BU30",   w=w4, n=nodes(w4), mat=UO2_W17_BU30_4G),
-        Region("Right Fuel, Fresh",  w=w3, n=nodes(w3), mat=UO2_W17_FRESH_4G),
-        Region("Right Be Refl.",    w=w2, n=nodes(w2), mat=BE_4G),
-        Region("Right Water",       w=w1, n=nodes(w1), mat=H2O_4G)
+    regions_opt = Regions(
+        Region("Left Refl.",        w=w1, n=nodes(w1), mat=H2O_4G),
+        Region("Left Refl.",     w=w2, n=nodes(w2), mat=BE_4G),
+        Region("Left Fresh Fuel",   w=w3, n=nodes(w3), mat=UO2_W17_FRESH_4G),
+        Region("Burnt Fuel",   w=w4, n=nodes(w4), mat=UO2_W17_BU30_4G),
+        Region("Right Fresh Fuel",  w=w3, n=nodes(w3), mat=UO2_W17_FRESH_4G),
+        Region("Right Refl.",    w=w2, n=nodes(w2), mat=BE_4G),
+        Region("Right Refl.",       w=w1, n=nodes(w1), mat=H2O_4G)
     )
 
-    mesh_3c = Mesh(regions_3c)
-    A_3c, F_3c = build_matrices(mesh_3c)
-    res_3c = solve_keff(A_3c, F_3c)
-    res_3c_normalized = res_3c.copy()
-    res_3c_normalized["phi"], _ = normalize_to_power_density(res_3c["phi"], mesh_3c, P_DENSITY_TARGET)
+    mesh_opt = Mesh(regions_opt)
+    A_opt, F_opt = build_matrices(mesh_opt)
+    res_opt = solve_keff(A_opt, F_opt)
+    res_opt_normalized = res_opt.copy()
+    res_opt_normalized["phi"], _ = normalize_to_power_density(res_opt["phi"], mesh_opt, P_DENSITY_TARGET)
     
     cutoff_item_length = nodes(w1) # Optimize flux shape inside outer layers
-    flattness = objective_flatness(res_3c_normalized["phi"], mesh_3c.x, cutoff_item_length)
+    flattness = objective_flatness(res_opt_normalized["phi"], mesh_opt.x, cutoff_item_length)
 
     return flattness 
 
@@ -109,11 +109,10 @@ print("\n" + "=" * 70)
 bare_results, bw, mesh_b = crit_search(PWR_2G,nodes_per_cm,5.0,600.0,False)
 print(f'Bare Results Final Width: {bw:.3f}')
 
-plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
+plot_flux(bare_results["phi"], mesh_b, bare_results['k'], title="2-Group", 
           save=_save("Case1_Bare_Core.pdf"))
-# plot_flux(bare_results["phi"], mesh_b, bare_results['k'],
-#           title=f"Bare core (k = {bare_results['k']:.5f})",
-#           save=_save("Bare_Core.pdf"))
+plot_flux(bare_results["phi"], mesh_b, bare_results['k'], title="2-Group", 
+          save=_save("Case1_Bare_Core.png"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -129,8 +128,10 @@ for ref_width in np.linspace(5,25,5):
     ref_save = (bw - rsw)/2
     print(f'Reflector Savings: {ref_save:.3f}')
 
-plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'],
+plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'], title="2-Group", 
           save=_save("Case2a_Refl_Core.pdf"))
+plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'], title="2-Group", 
+          save=_save("Case2a_Refl_Core.png"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -146,8 +147,10 @@ for ref_width in np.linspace(5,25,5):
     ref_save = (bw - rsw)/2
     print(f'Reflector Savings: {ref_save:.3f}')
 
-plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'],
+plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'], title="4-Group", 
           save=_save("Case2b_Refl_Core_4G.pdf"))
+plot_flux(ref_save_results["phi"], mesh_rs, ref_save_results['k'], title="4-Group", 
+          save=_save("Case2b_Refl_Core_4G.png"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -159,13 +162,13 @@ print("\n" + "=" * 70)
 # Design: Burnt Fuel | Fresh Fuel | Cladding | Water
 
 regions_3a = Regions(
-    Region("Left Water",        w=20, n=nodes(10), mat=WATER_2G),
-    Region("Left Be Refl.",     w=5, n=nodes(5), mat=BE_2G),
-    Region("Left Fuel, Fresh",   w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
-    Region("Central Fuel, BU30",   w=10, n=nodes(30), mat=UO2_W17_BU30_2G),
-    Region("Right Fuel, Fresh",  w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
-    Region("Right Be Refl.",    w=5, n=nodes(5), mat=BE_2G),
-    Region("Right Water",       w=20, n=nodes(10), mat=WATER_2G)
+    Region("Left Refl.",        w=20, n=nodes(10), mat=WATER_2G),
+    Region("Left Refl.",     w=5, n=nodes(5), mat=BE_2G),
+    Region("Left Fresh Fuel",   w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
+    Region("Burnt Fuel",   w=10, n=nodes(30), mat=UO2_W17_BU30_2G),
+    Region("Right Fresh Fuel",  w=20, n=nodes(20), mat=UO2_W17_FRESH_2G),
+    Region("Right Refl.",    w=5, n=nodes(5), mat=BE_2G),
+    Region("Right Refl.",       w=20, n=nodes(10), mat=WATER_2G)
 )
 
 
@@ -176,9 +179,10 @@ res_3a_normalized = res_3a.copy()
 res_3a_normalized["phi"], _ = normalize_to_power_density(res_3a["phi"], mesh_3a, P_DENSITY_TARGET)
 # print_summary(res_3a_normalized, mesh_3a)
 
-plot_flux(res_3a_normalized["phi"], mesh_3a, res_3a_normalized['k'],
+plot_flux(res_3a_normalized["phi"], mesh_3a, res_3a_normalized['k'], title="2-Group", 
           save=_save("Case3a_7-reg_2G.pdf"))
-
+plot_flux(res_3a_normalized["phi"], mesh_3a, res_3a_normalized['k'], title="2-Group", 
+          save=_save("Case3a_7-reg_2G.png"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -188,13 +192,13 @@ print("\n" + "=" * 70)
 print("Case 3b: Heterogeneous 5-region 4-group core")
 print("\n" + "=" * 70)
 regions_3b = Regions(
-    Region("Left Water",        w=20, n=nodes(10), mat=H2O_4G),
-    Region("Left Be Refl.",     w=5, n=nodes(5), mat=BE_4G),
-    Region("Left Fuel, Fresh",   w=20, n=nodes(20), mat=UO2_W17_FRESH_4G),
-    Region("Central Fuel, BU30",   w=10, n=nodes(30), mat=UO2_W17_BU30_4G),
-    Region("Right Fuel, Fresh",  w=20, n=nodes(20), mat=UO2_W17_FRESH_4G),
-    Region("Right Be Refl.",    w=5, n=nodes(5), mat=BE_4G),
-    Region("Right Water",       w=20, n=nodes(10), mat=H2O_4G)
+    Region("Left Refl.",        w=20, n=nodes(10), mat=H2O_4G),
+    Region("Left Refl.",     w=5, n=nodes(5), mat=BE_4G),
+    Region("Left Fresh Fuel",   w=20, n=nodes(20), mat=UO2_W17_FRESH_4G),
+    Region("Burnt Fuel",   w=10, n=nodes(30), mat=UO2_W17_BU30_4G),
+    Region("Right Fresh Fuel",  w=20, n=nodes(20), mat=UO2_W17_FRESH_4G),
+    Region("Right Refl.",    w=5, n=nodes(5), mat=BE_4G),
+    Region("Right Refl.",       w=20, n=nodes(10), mat=H2O_4G)
 )
 
 mesh_3b = Mesh(regions_3b)
@@ -204,15 +208,17 @@ res_3b_normalized = res_3b.copy()
 res_3b_normalized["phi"], _ = normalize_to_power_density(res_3b["phi"], mesh_3b, P_DENSITY_TARGET)
 # print_summary(res_3b_normalized, mesh_3b)
 
-plot_flux(res_3b_normalized["phi"], mesh_3b, res_3b_normalized['k'],
+plot_flux(res_3b_normalized["phi"], mesh_3b, res_3b_normalized['k'], title="4-Group", 
           save=_save("Case3b_7-reg_4G.pdf"))
+plot_flux(res_3b_normalized["phi"], mesh_3b, res_3b_normalized['k'], title="4-Group", 
+          save=_save("Case3b_7-reg_4G.png"))
 
 
 # ---------------------------------------------------------------------------------------
-# Case 3c: Layered 5-region core, 4-group, flat-flux optimisation
+# Case 3c: Layered 5-region core, 2-group, flat-flux optimisation
 # ---------------------------------------------------------------------------------------
 print("\n" + "=" * 70)
-print("Case 3c: Flat-flux optimization of 5-region 4-group core")
+print("Case 3c: Flat-flux optimization of 5-region 2-group core")
 print("\n" + "=" * 70)
 
 widths_initial = [30, 20, 20, 20]
@@ -221,13 +227,13 @@ print(f'Optimized widths: {optimized_widths}')
 
 w1_opt, w2_opt, w3_opt, w4_opt = optimized_widths.x
 regions_3c_opt = Regions(
-    Region("Left Water",        w=w1_opt, n=nodes(w1_opt), mat=H2O_4G),
-    Region("Left Be Refl.",     w=w2_opt, n=nodes(w2_opt), mat=BE_4G),
-    Region("Left Fuel, Fresh",   w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_4G),
-    Region("Central Fuel, BU30",   w=w4_opt, n=nodes(w4_opt), mat=UO2_W17_BU30_4G),
-    Region("Right Fuel, Fresh",  w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_4G),
-    Region("Right Be Refl.",    w=w2_opt, n=nodes(w2_opt), mat=BE_4G),
-    Region("Right Water",       w=w1_opt, n=nodes(w1_opt), mat=H2O_4G)
+    Region("Left Refl.",        w=w1_opt, n=nodes(w1_opt), mat=H2O_2G),
+    Region("Left Refl.",     w=w2_opt, n=nodes(w2_opt), mat=BE_2G),
+    Region("Left Fresh Fuel",   w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_2G),
+    Region("Burnt Fuel",   w=w4_opt, n=nodes(w4_opt), mat=UO2_W17_BU30_2G),
+    Region("Right Fresh Fuel",  w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_2G),
+    Region("Right Refl.",    w=w2_opt, n=nodes(w2_opt), mat=BE_2G),
+    Region("Right Refl.",       w=w1_opt, n=nodes(w1_opt), mat=H2O_2G)
 )
 
 mesh_3c_opt = Mesh(regions_3c_opt)
@@ -237,8 +243,45 @@ res_3c_opt_normalized = res_3c_opt.copy()
 res_3c_opt_normalized["phi"], _ = normalize_to_power_density(res_3c_opt["phi"], mesh_3c_opt, P_DENSITY_TARGET)
 # print_summary(res_3c_opt_normalized, mesh_3c_opt)
 
-plot_flux(res_3c_opt_normalized["phi"], mesh_3c_opt, res_3c_opt_normalized['k'],
-          save=_save("Case3c_opt_7-reg_4G.pdf"))
+plot_flux(res_3c_opt_normalized["phi"], mesh_3c_opt, res_3c_opt_normalized['k'], title="2-Group", 
+          save=_save("Case3c_opt_7-reg_2G.pdf"))
+plot_flux(res_3c_opt_normalized["phi"], mesh_3c_opt, res_3c_opt_normalized['k'], title="2-Group", 
+          save=_save("Case3c_opt_7-reg_2G.png"))
+
+
+# ---------------------------------------------------------------------------------------
+# Case 3c: Layered 5-region core, 4-group, flat-flux optimisation
+# ---------------------------------------------------------------------------------------
+print("\n" + "=" * 70)
+print("Case 3d: Flat-flux optimization of 5-region 4-group core")
+print("\n" + "=" * 70)
+
+widths_initial = [30, 20, 20, 20]
+optimized_widths = minimize(case3_optimization, widths_initial, method='Nelder-Mead',bounds=[(1,30),(0.5,80),(0.5,80),(0.5,80)])
+print(f'Optimized widths: {optimized_widths}')
+
+w1_opt, w2_opt, w3_opt, w4_opt = optimized_widths.x
+regions_3d_opt = Regions(
+    Region("Left Refl.",        w=w1_opt, n=nodes(w1_opt), mat=H2O_4G),
+    Region("Left Refl.",     w=w2_opt, n=nodes(w2_opt), mat=BE_4G),
+    Region("Left Fresh Fuel",   w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_4G),
+    Region("Burnt Fuel",   w=w4_opt, n=nodes(w4_opt), mat=UO2_W17_BU30_4G),
+    Region("Right Fresh Fuel",  w=w3_opt, n=nodes(w3_opt), mat=UO2_W17_FRESH_4G),
+    Region("Right Refl.",    w=w2_opt, n=nodes(w2_opt), mat=BE_4G),
+    Region("Right Refl.",     w=w1_opt, n=nodes(w1_opt), mat=H2O_4G)
+)
+
+mesh_3d_opt = Mesh(regions_3d_opt)
+A_3d_opt, F_3d_opt = build_matrices(mesh_3d_opt)
+res_3d_opt = solve_keff(A_3d_opt, F_3d_opt)
+res_3d_opt_normalized = res_3d_opt.copy()
+res_3d_opt_normalized["phi"], _ = normalize_to_power_density(res_3d_opt["phi"], mesh_3d_opt, P_DENSITY_TARGET)
+# print_summary(res_3d_opt_normalized, mesh_3d_opt)
+
+plot_flux(res_3d_opt_normalized["phi"], mesh_3d_opt, res_3d_opt_normalized['k'], title="4-Group", 
+          save=_save("Case3d_opt_7-reg_4G.pdf"))
+plot_flux(res_3d_opt_normalized["phi"], mesh_3d_opt, res_3d_opt_normalized['k'], title="4-Group", 
+          save=_save("Case3d_opt_7-reg_4G.png"))
 
 
 # ---------------------------------------------------------------------------------------
@@ -248,11 +291,11 @@ print("\n" + "=" * 70)
 print("Case 4: Adjoint + Rayleigh-quotient")
 print("\n" + "=" * 70)
 regions_4 = Regions(
-    Region("Reflector",        w=15.0, n=nodes(15), mat=H2O_4G),
-    Region("Fresh Fuel",   w=25, n=nodes(25), mat=FRESH_FUEL_4G),
-    Region("Rodded AIC Fuel",   w=10, n=nodes(15), mat=Rodded_AIC_4G),
-    Region("Fresh Fuel",  w=25, n=nodes(25), mat=FRESH_FUEL_4G),
-    Region("Reflector",       w=15, n=nodes(15), mat=H2O_4G)
+    Region("Left Reflector",        w=15.0, n=nodes(15), mat=H2O_4G),
+    Region("Left Fresh Fuel",   w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("Control Rod/Fuel",   w=10, n=nodes(15), mat=Rodded_AIC_4G),
+    Region("Right Fresh Fuel",  w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("Right Reflector",       w=15, n=nodes(15), mat=H2O_4G)
 )
 
 mesh_4 = Mesh(regions_4)

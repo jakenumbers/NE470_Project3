@@ -114,7 +114,7 @@ class Material:
 ##################
 ## 2G PWR Material
 PWR_2G = Material(
-    name="PWR_Core_2G",
+    name="PWR, 2G",
     G=2,
     D=None,
     sigma_a=[0.01207,0.1210], 			
@@ -131,7 +131,7 @@ PWR_2G = Material(
 ########################################
 #Water Reflector for "Reflector Savings"
 WATER_2G = Material(
-    name="Water_Reflector_2G",
+    name="H$_2$O",
     G=2,
     D=None,
     sigma_a=[0.0004, 0.0197],
@@ -152,7 +152,7 @@ WATER_2G = Material(
 #############################################
 #Water Reflector 17x17 W Assembly next to H2O		##Validated 
 H2O_2G = Material(
-    name="H2O_2G",
+    name="H$_2$O",
     G=2,
     D=None,				
     sigma_a=[0.001128, 0.009114],	
@@ -170,7 +170,7 @@ H2O_2G = Material(
 #################################################		##Validated 
 #Beryllium Reflector 17x17 W Assembly next to H2O    
 BE_2G = Material(
-    name="BE_2G",
+    name="Be",
     G=2,
     D=None,					
     sigma_a=[0.0005143, 0.001885],		
@@ -187,7 +187,7 @@ BE_2G = Material(
 ################################################		##Validated 
 #Graphite Reflector 17x17 W Assembly next to H2O    
 C_2G = Material(
-    name="C_2G",
+    name="C",
     G=2,
     D=None,					
     sigma_a=[0.0005952, 0.001064],		
@@ -205,7 +205,7 @@ C_2G = Material(
 #######################################################		##Validated 
 #Stainless Steel Reflector 17x17 W Assembly next to H2O   
 SS_2G = Material(
-    name="SS_2G",
+    name="SS",
     G=2,
     D=None,					
     sigma_a=[0.001521, 0.004995],		
@@ -230,7 +230,7 @@ SS_2G = Material(
 MOX_2G = Material(
 
     ## Macro cross sections 
-    name="MOX_wec17_2G",
+    name="MOX (W17)",
     G=2,
     D=None,					
     sigma_a=[1.553e-02, 1.262e-01],		
@@ -249,7 +249,7 @@ MOX_2G = Material(
 # UO2 W17 unrodded 0GWD/MTU	(K-inf = 1.16952)				#Validated
 UO2_W17_FRESH_2G = Material(
     ## Macro cross sections 
-    name="UO2_BU0__2G",
+    name="UO$_2$ 0%BU",
     G=2,
     D=None,					
     sigma_a=[9.506e-03, 9.191e-02],		
@@ -268,7 +268,7 @@ UO2_W17_FRESH_2G = Material(
 # UO2 17x17 0.1 GWD/MTU k-inf = 0.8909						#validated
 UO2_W17_BU30_2G = Material(
     ## Macro cross sections 
-    name="UO2_BU30_2G",
+    name="UO$_2$ 30%BU",
     G=2,
     D=None,					
     sigma_a=[1.142e-02, 1.082e-01],		
@@ -291,7 +291,7 @@ UO2_W17_BU30_2G = Material(
 #############################################
 #Water Reflector 17x17 W Assembly next to H2O		##Validated 
 H2O_4G = Material(
-    name="H2O_4G",
+    name="H$_2$O",
     G=4,
     D=None,
     sigma_a=[0.00031, 0.002475, 0.00145, 0.009114],	
@@ -311,7 +311,7 @@ H2O_4G = Material(
 #############################################
 ## 4G Beryllium reflector 
 BE_4G = Material(
-    name="BE_4G",
+    name="Be",
     G=4,
     D=None,
     sigma_a=[-7.871e-04, 1.892e-03, 7.089e-04, 1.885e-03],
@@ -331,7 +331,7 @@ BE_4G = Material(
 ##############################################
 ## 4G Graphite reflector
 C_4G = Material(
-    name="C_4G",
+    name="C",
     G=4,
     D=None,
     sigma_a=[2.231e-04, 1.133e-03, 3.954e-04, 1.064e-03],
@@ -356,7 +356,7 @@ C_4G = Material(
 ##################################
 ## 4-GROUP MOX			
 MOX_4G = Material(
-    name="MOX_4G",
+    name="MOX (W17)",
     G=4,
     D=None,
     sigma_a=[5.011e-03, 1.741e-02, 6.722e-02, 1.262e-01],
@@ -376,7 +376,7 @@ MOX_4G = Material(
 ##################################
 ## UO2 W17 fesh fuel
 UO2_W17_FRESH_4G = Material(
-    name="UO2_W17_fresh_4G",
+    name="UO$_2$ 0%BU",
     G=4,
     D=None,
     sigma_a=[2.458e-03, 1.013e-02, 3.525e-02, 9.191e-02],
@@ -396,7 +396,7 @@ UO2_W17_FRESH_4G = Material(
 ##################################
 ## UO2 W17 BU30
 UO2_W17_BU30_4G = Material(
-    name="UO2_W17_BU30_4G",
+    name="UO$_2$ 30%BU",
     G=4,
     D=None,
     sigma_a=[2.350e-03, 9.728e-03, 4.750e-02, 1.082e-01],
@@ -415,7 +415,7 @@ UO2_W17_BU30_4G = Material(
 
 #Rodded lattice at BOC with AIC Control Rods W17x17
 Rodded_AIC_4G = Material(
-    name="Rodded_AIC_4G",
+    name="Rodded AIC",
     G=4,
     D=None,
     sigma_a=[0.002662, 0.01248, 0.05131, 0.1198],
@@ -433,7 +433,7 @@ Rodded_AIC_4G = Material(
 
 #Rodded lattice at BOC with B4C Control Rods W17x17
 Rodded_B4C_4G = Material(
-    name="Rodded_B4C_4G",
+    name="Rodded B4C",
     G=4,
     D=None,
     sigma_a=[0.002724, 0.01512, 0.06172, 0.1213],
@@ -451,7 +451,7 @@ Rodded_B4C_4G = Material(
 
 #Fresh Unrodded Fuel W17x17
 FRESH_FUEL_4G = Material(
-    name="FRESH_FUEL_4G",
+    name="W17 Fuel 0%BU",
     G=4,
     D=None,
     sigma_a=[0.002458, 0.01013, 0.03525, 0.09191],
@@ -470,7 +470,7 @@ FRESH_FUEL_4G = Material(
 # Typical PWR homogenized core (textbook four-group values used for the base
 # homogeneous configuration in the project statement).
 PWR_4G = Material(
-    name="PWR, homogeneous, 4G",
+    name="PWR, 4G",
     G=4,
     D=[2.1623, 1.0867, 0.6318, 0.3543],
     sigma_a=[0.004946, 0.002840, 0.03053, 0.1210],
