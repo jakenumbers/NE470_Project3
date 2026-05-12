@@ -147,6 +147,27 @@ plot_flux(bare_results_normalized["phi"], mesh_b, bare_results['k'], title="2-Gr
 plot_flux(bare_results_normalized["phi"], mesh_b, bare_results['k'], title="2-Group", 
           save=_save("Case1_Bare_Core.png"))
 
+# ---------------------------------------------------------------------------------------
+# Case 1b: Homogen. PWR, 4-region core
+# ---------------------------------------------------------------------------------------
+print("\n" + "=" * 70)
+print("Case 1b: Homogen. PWR, 4-region core")
+print("\n" + "=" * 70)
+#Crit Search (Core Material, Node Density, Min Width, Max Width, Default Tolerancing is found in python file)
+bare_results, bw, mesh_b = crit_search(PWR_4G,nodes_per_cm,5.0,600.0,False)
+print(f'Bare Results Final Width: {bw:.3f}')
+
+bare_results_normalized = bare_results.copy()
+bare_results_normalized["phi"], _ = normalize_to_power_density(bare_results["phi"], mesh_b, P_DENSITY_TARGET)
+l_w = np.sqrt(P_th/ (mesh_b.regions.total_width * P_DENSITY_TARGET))
+print(f'Depth and height of slab: {l_w:.3f} cm')
+print(f'Thickness-to-height/depth ratio: {l_w/mesh_b.regions.total_width:.2f}')
+
+plot_flux(bare_results_normalized["phi"], mesh_b, bare_results['k'], title="4-Group", 
+          save=_save("Case1b_Bare_Core.pdf"))
+plot_flux(bare_results_normalized["phi"], mesh_b, bare_results['k'], title="4-Group", 
+          save=_save("Case1b_Bare_Core.png"))
+
 
 # ---------------------------------------------------------------------------------------
 # Case 2a: Homogen. PWR 2-region core with reflector, savings calc.

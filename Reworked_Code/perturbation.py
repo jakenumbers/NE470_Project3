@@ -116,8 +116,8 @@ def perturbation_example(regions, mat):
     
     x = [-0.25,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.25]
     plt.figure(figsize=(5,3))
-    plt.plot(x,pred_rho, linestyle='--', label = 'First-order perturbation (Rayleigh)')
-    plt.plot(x,exact_rho, label = 'Exact $\Delta k$')
+    plt.plot(x,pred_rho, linestyle='--', label = 'First-order perturbation (Rayleigh coefficient)')
+    plt.plot(x,exact_rho, label = 'Calculated $\Delta k_{{eff}}$')
     plt.xlabel('$\Delta \Sigma_a$')
     plt.ylabel('$\Delta$k')
     # plt.title('$\Delta$k')

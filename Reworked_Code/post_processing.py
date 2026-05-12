@@ -141,9 +141,10 @@ def plot_flux(
         shade_regions(ax, mesh.regions, np.max(phi_gx))
 
     group_labels = ["Fast (g=1)", "Epithermal (g=2)", "Resonance (g=3)", "Thermal (g=4)"]
+    colors = ["C0", "C4", "C2", "C3"]
     if G == 2:
         group_labels = ["Fast (g=1)", "Thermal (g=2)"]
-    colors = ["C0", "C3", "C2", "C4"]
+        colors = ["C0", "C3"]
 
     for g in range(G):
         lab = group_labels[g] if g < len(group_labels) else f"Group {g+1}"
