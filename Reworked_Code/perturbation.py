@@ -59,7 +59,10 @@ def perturbation_example(regions, mat):
     adjoint = solve_adjoint(A, F)
 
     forward_normalized = forward.copy()
-    forward_normalized["phi"], _ = normalize_to_power_density(forward["phi"], mesh, 90)
+    forward_normalized["phi"], _ = normalize_to_power_density(forward["phi"], mesh, 45)
+    l_w = np.sqrt(300e6 / (mesh.regions.total_width * 45))
+    print(f'Depth and height of slab: {l_w:.3f} cm')
+    print(f'Thickness-to-height/depth ratio: {l_w/mesh.regions.total_width:.2f}')
     # print_summary(forward_normalized, mesh_3a)
 
     plot_flux(forward_normalized["phi"], mesh, forward_normalized['k'], title='Forward Solution',
@@ -68,7 +71,10 @@ def perturbation_example(regions, mat):
             save=_save("Case4_forward.png"))
 
     adjoint_normalized = adjoint.copy()
-    adjoint_normalized["phi"], _ = normalize_to_power_density(adjoint["phi"], mesh, 90)
+    adjoint_normalized["phi"], _ = normalize_to_power_density(adjoint["phi"], mesh, 45)
+    l_w = np.sqrt(300e6 / (mesh.regions.total_width * 45))
+    print(f'Depth and height of slab: {l_w:.3f} cm')
+    print(f'Thickness-to-height/depth ratio: {l_w/mesh.regions.total_width:.2f}')
     # print_summary(adjoint_normalized, mesh_3a)
 
     plot_flux(adjoint_normalized["phi"], mesh, adjoint_normalized['k'], title='Adjoint Solution',
@@ -109,7 +115,7 @@ def perturbation_example(regions, mat):
         pred_rho.append(new_k)
     
     x = [-0.25,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.25]
-    plt.figure(figsize=(4,4))
+    plt.figure(figsize=(5,3))
     plt.plot(x,pred_rho, linestyle='--', label = 'First-order perturbation (Rayleigh)')
     plt.plot(x,exact_rho, label = 'Exact $\Delta k$')
     plt.xlabel('$\Delta \Sigma_a$')

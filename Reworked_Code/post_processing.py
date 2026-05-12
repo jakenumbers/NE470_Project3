@@ -23,7 +23,7 @@ plt.rcParams.update({
     "axes.labelsize": 10,
     "xtick.labelsize": 10,
     "ytick.labelsize": 10,
-    "legend.fontsize": 7.5,
+    "legend.fontsize": 4,
     "axes.spines.top": True,
     "axes.spines.right": True,
     "xtick.direction": "in",
@@ -81,8 +81,8 @@ def shade_regions(ax, regions, max_phi):
     for idx, r in enumerate(regions.regions):
         # ax.axvspan(x_off, x_off + r.w, color=cmap(idx % cmap.N), alpha=0.35, zorder=0, label=f"{r.name} ({r.mat.name})")
         ax.fill_between([x_off, (x_off + r.w)], [max_phi*1.1,max_phi*1.1], hatch=hatch_styles[idx], facecolor=(colors[idx],0.35), 
-                        edgecolor=(colors[idx],0.6), zorder=0, 
-                        label=f"{r.mat.name} – {r.name}")
+                        edgecolor=('gray',0.1), zorder=0, 
+                        label=f"{r.mat.name} (${r.w:.1f}$ cm)")#label=f"{r.mat.name} ($W_\mathrm{{{r.name}}} = {r.w:.1f}$ cm)")
         x_off += r.w
         print(f'   {r.name}: {r.w}')
 
@@ -92,11 +92,14 @@ def legend_no_dupes(ax,k_val, **kw):
     k_patch = mpatches.Patch(color='none',label=f"k = {k_val:.5f}")
     handles.append(k_patch)
     labels.append(f"k = {k_val:.5f}")
+    for patch in ax.patches:
+        patch.set_hatch('')
     seen = {}
     for h, l in zip(handles, labels):
-        if l not in seen:
-            seen[l] = h
-    ax.legend(seen.values(), seen.keys(), **kw)
+        # if l not in seen:
+        seen[l] = h
+    leg = ax.legend(seen.values(), seen.keys(), **kw)
+    
 
 
 #%% Plot Flux
@@ -105,7 +108,7 @@ def plot_flux(
     mesh,
     k,
     title=None,
-    normalize=True,
+    normalize=False,
     show_regions=True,
     save=None,
     ax=None,
@@ -132,12 +135,12 @@ def plot_flux(
 
     own_fig = ax is None
     if own_fig:
-        fig, ax = plt.subplots(figsize=(6, 4))
+        fig, ax = plt.subplots(figsize=(5, 4))
 
     if show_regions:
         shade_regions(ax, mesh.regions, np.max(phi_gx))
 
-    group_labels = ["Fast (g=1)", "Epi (g=2)", "Res (g=3)", "Thermal (g=4)"]
+    group_labels = ["Fast (g=1)", "Epithermal (g=2)", "Resonance (g=3)", "Thermal (g=4)"]
     if G == 2:
         group_labels = ["Fast (g=1)", "Thermal (g=2)"]
     colors = ["C0", "C3", "C2", "C4"]
@@ -149,11 +152,12 @@ def plot_flux(
 
     ax.set_xlabel("Position x [cm]")
     ax.set_ylabel("Flux  $\\phi_g$" + (" (Normalized)" if normalize else " [n/cm$^2$/s]"))
+    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0), useMathText=True)
     if title:
         # ax.set_title(title)
         ax.text(0.05,0.94, title, transform=ax.transAxes, fontsize=12, fontweight='semibold', va='top', ha='left')
     # ax.grid(True, alpha=0.3)
-    legend_no_dupes(ax, k, loc="best")
+    legend_no_dupes(ax, k, loc="best", fontsize=8.5)
 
     if save and own_fig:
         os.makedirs(os.path.dirname(save) or ".", exist_ok=True)
@@ -169,7 +173,7 @@ def plot_convergence(history, title=None, save=None, ax=None):
     """Plot k_eff vs power-iteration step."""
     own_fig = ax is None
     if own_fig:
-        fig, ax = plt.subplots(figsize=(6, 4))
+        fig, ax = plt.subplots(figsize=(5, 4))
     ax.plot(history, "o-", ms=3)
     ax.set_xlabel("Power iteration")
     ax.set_ylabel("$k$")

@@ -184,15 +184,20 @@ def average_power_density(phi, mesh):
     return p_per_area / W
 
 
-def normalize_to_power_density(phi, mesh, target_W_per_cm3=90):
+def normalize_to_power_density(phi, mesh, target_W_per_cm3=45):
+    Power = 300e6 # Watts
     """
     Rescale phi so that the fuel-averaged power density equals target_W_per_cm3
 
     Returns the rescaled flux and the scaling factor.
     """
     p_now = average_power_density(phi, mesh)
-    if p_now <= 0:
-        raise RuntimeError("Cannot normalize: average power density is non-positive.")
+    # l_w = (mesh.regions.total_width*25) # length and width dimensions, 25x thickness to assume infinite slab
+    
+    # factor = (Power/(l_w**2*mesh.regions.total_width))/p_now
+    # print(f'Depth/Height of Slab: {l_w} cm')
+    # print(f'Thickness of Slab: {mesh.regions.total_width} cm')
+
     factor = target_W_per_cm3 / p_now
     return phi * factor, factor
 
