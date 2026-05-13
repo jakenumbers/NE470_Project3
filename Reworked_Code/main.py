@@ -328,7 +328,7 @@ plot_flux(res_3c_opt_normalized["phi"], mesh_3c_opt, res_3c_opt_normalized['k'],
 
 
 # ---------------------------------------------------------------------------------------
-# Case 3c: Layered 5-region core, 4-group, flat-flux optimisation
+# Case 3d: Layered 5-region core, 4-group, flat-flux optimisation
 # ---------------------------------------------------------------------------------------
 print("\n" + "=" * 70)
 print("Case 3d: Flat-flux optimization of 5-region 4-group core")
@@ -376,9 +376,9 @@ print("Case 4: Adjoint + Rayleigh-quotient")
 print("\n" + "=" * 70)
 regions_4 = Regions(
     Region("LR",        w=15.0, n=nodes(15), mat=H2O_4G),
-    Region("LF,fresh",   w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("LF,fresh",   w=25, n=nodes(25), mat=UO2_W17_FRESH_4G),
     Region("F,rodded",   w=10, n=nodes(15), mat=Rodded_AIC_4G),
-    Region("RF,fresh",  w=25, n=nodes(25), mat=FRESH_FUEL_4G),
+    Region("RF,fresh",  w=25, n=nodes(25), mat=UO2_W17_FRESH_4G),
     Region("RR",       w=15, n=nodes(15), mat=H2O_4G)
 )
 
@@ -386,7 +386,7 @@ mesh_4 = Mesh(regions_4)
 A_4, F_4 = build_matrices(mesh_4)
 res_4 = solve_keff(A_4, F_4)
 
-perturbation_example(regions_4, FRESH_FUEL_4G)
+perturbation_example(regions_4, UO2_W17_FRESH_4G)
 
 
 
